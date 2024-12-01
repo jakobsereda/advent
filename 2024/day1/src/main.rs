@@ -1,8 +1,6 @@
-use std::fs::File;
-use std::io::{
-    self,
-    prelude::*,
-    BufReader
+use std::{
+    fs::File,
+    io::{self, prelude::*, BufReader},
 };
 
 fn main() -> io::Result<()> {
@@ -14,7 +12,8 @@ fn main() -> io::Result<()> {
     let mut second_list: Vec<i32> = Vec::new();
 
     for line in lines {
-        let pair: Vec<i32> = line.split_whitespace()
+        let pair: Vec<i32> = line
+            .split_whitespace()
             .map(|s| s.parse::<i32>().unwrap())
             .collect();
         first_list.push(pair[0]);
@@ -47,10 +46,7 @@ fn part_two(first_list: &[i32], second_list: &[i32]) {
     let res: i32 = first_list
         .iter()
         .map(|e| {
-            let count: i32 = second_list
-                .iter()
-                .filter(|&n| *n == *e)
-                .count() as i32;
+            let count: i32 = second_list.iter().filter(|&n| *n == *e).count() as i32;
             e * count
         })
         .sum();
