@@ -70,6 +70,7 @@ fn find_and_eval_muls(input: &str) -> Vec<i32> {
             i += 1;
         }
     }
+
     res
 }
 
@@ -121,5 +122,6 @@ fn find_and_eval_with_blocks(input: &str) -> Vec<i32> {
             i += 1;
         }
     }
+
     res
 }
