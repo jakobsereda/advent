@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
         data += s;
         data.push_back('\n');
     }
+
+    cout << data;
     
     return 0;
 }
