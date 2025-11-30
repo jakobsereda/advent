@@ -9,13 +9,14 @@ typedef uint64_t u64;
 
 int main(int argc, char *argv[])
 {
-    if (argc > 2) {
-        cout << "failure" << '\n';
-        return 1;
-    }
+    ifstream file("data/data.txt");
+    string   s;
+    string   data;
 
-    for (u16 i = 0; i < atoi(argv[1]); i++)
-        cout << i << '\n';
+    while (getline(file, s)) {
+        data += s;
+        data.push_back('\n');
+    }
     
     return 0;
 }
