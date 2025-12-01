@@ -1,5 +1,5 @@
 CXX   = g++
-FLAGS = -std=c++23
+FLAGS = -std=c++23 -I..
 
 TARGET = main
 SRC    = main.cpp
