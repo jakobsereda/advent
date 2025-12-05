@@ -33,6 +33,8 @@ int main(void)
     for (i64 s : stock)
         if (fresh(s, ranges))
             sum++;
+    
+    // ==== part two ====
 
     sort(ranges.begin(), ranges.end(),
         [](const pair<i64, i64> &a, const pair<i64, i64> &b) {
@@ -54,6 +56,8 @@ int main(void)
     i64 sum2 = 0;
     for (auto p : merged)
         sum2 += p.second - p.first + 1;
+
+    // ==================
 
     cout << "Part one: " << sum << '\n';
     cout << "Part two: " << sum2 << '\n';
