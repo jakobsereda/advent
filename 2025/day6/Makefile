@@ -1,1 +1,1 @@
-/home/jake/repos/advent/2025/Makefile
+../Makefile
