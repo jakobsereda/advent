@@ -5,7 +5,6 @@ int main(void)
     vector<string> lines = read_lines("data/data.txt");
 
     vector<vector<bool>> rolls;
-
     for (string line : lines) {
         vector<bool> shelf;
         for (char& c : line)
@@ -26,7 +25,6 @@ int main(void)
         { -1, 1 },
         { -1, -1 }
     };
-
 
     i32 sum = 0;
     for (size_t i = 0; i < rolls.size(); i++) {
