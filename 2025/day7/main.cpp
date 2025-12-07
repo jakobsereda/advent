@@ -4,16 +4,16 @@ map<pair<size_t, size_t>, i64> dp;
 
 i64 find_timelines(size_t idx, size_t depth, const vector<vector<char>> &g)
 {
-    // if (idx >= g[0].size())
-    //     return 0;
     while (g[depth][idx] != '^') {
         if (depth == g.size() - 1)
             return 1;
         depth++;
     }
+
     auto key = make_pair(idx, depth);
     if (dp.contains(key))
         return dp[key];
+
     i64 l = 0;
     i64 r = 0;
     if (idx > 0)
