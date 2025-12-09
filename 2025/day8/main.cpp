@@ -7,6 +7,38 @@ struct JunctionBox
     i64 z;
 };
 
+struct UnionFind
+{
+    vector<i64> parent;
+    vector<i64> size;
+
+    UnionFind(i64 n) : parent(n), size(n, 1)
+    {
+        for (i64 i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    bool union_(i64 a, i64 b)
+    {
+        a = find(a);
+        b = find(b);
+        if (a == b)
+            return false;
+        if (size[a] < size[b])
+            swap(a, b);
+        parent[b] = a;
+        size[a] += size[b];
+        return true;
+    }
+
+    i64 find(i64 a)
+    {
+        if (parent[a] != a)
+            parent[a] = find(parent[a]);
+        return parent[a];
+    }
+};
+
 i64 box_dist(JunctionBox a, JunctionBox b)
 {
     i64 dx = a.x - b.x;
@@ -43,49 +75,23 @@ int main(void)
         [](auto a, auto b) {
             return get<0>(a) < get<0>(b);
         });
+    
+    UnionFind uf(n);
 
-    vector<set<i64>> circuits;
-    vector<i64> mapping(n, -1);
     for (size_t i = 0; i < 1000; i++) {
-        size_t idx_a = get<1>(pairs[i]);
-        size_t idx_b = get<2>(pairs[i]);
-        bool a_not_mapped = mapping[idx_a] < 0;
-        bool b_not_mapped = mapping[idx_b] < 0;
-
-        if (a_not_mapped && b_not_mapped) {
-            set<i64> s;
-            s.insert(idx_a);
-            s.insert(idx_b);
-            i64 map = circuits.size();
-            mapping[idx_a] = map;
-            mapping[idx_b] = map;
-            circuits.push_back(s);
-        } else if (a_not_mapped) {
-            i64 idx_s = mapping[idx_b];
-            mapping[idx_a] = idx_s;
-            circuits[idx_s].insert(idx_a);
-        } else if (b_not_mapped) {
-            i64 idx_s = mapping[idx_a];
-            mapping[idx_b] = idx_s;
-            circuits[idx_s].insert(idx_b);
-        } else {
-            i64 idx_sa = mapping[idx_a];
-            i64 idx_sb = mapping[idx_b];
-            if (idx_sa == idx_sb)
-                continue;
-            if (circuits[idx_sa].size() < circuits[idx_sb].size())
-                swap(idx_sa, idx_sb);
-            for (i64 j : circuits[idx_sb]) {
-                circuits[idx_sa].insert(j);
-                mapping[j] = idx_sa;
-            }
-            circuits[idx_sb].clear();
-        }
+        auto [d, a, b] = pairs[i];
+        uf.union_(a, b);
     }
 
     vector<i64> sizes;
-    for (set<i64> s : circuits)
-        sizes.push_back(s.size());
+    vector<bool> seen(n, false);
+    for (size_t i = 0; i < n; i++) {
+        i64 a = uf.find(i);
+        if (!seen[a]) {
+            seen[a] = true;
+            sizes.push_back(uf.size[a]);
+        }
+    }
 
     sort(sizes.begin(), sizes.end(), greater<int>());
 
@@ -93,57 +99,19 @@ int main(void)
 
     // ==== part two ====
 
-    size_t last_a = 0;
-    size_t last_b = 0;
-    for (size_t i = 1000; i < pairs.size(); i++) {
-        size_t idx_a = get<1>(pairs[i]);
-        size_t idx_b = get<2>(pairs[i]);
-        bool a_not_mapped = mapping[idx_a] < 0;
-        bool b_not_mapped = mapping[idx_b] < 0;
+    UnionFind uf2(n);
 
-        if (a_not_mapped && b_not_mapped) {
-            set<i64> s;
-            s.insert(idx_a);
-            s.insert(idx_b);
-            i64 map = circuits.size();
-            mapping[idx_a] = map;
-            mapping[idx_b] = map;
-            circuits.push_back(s);
-        } else if (a_not_mapped) {
-            i64 idx_s = mapping[idx_b];
-            mapping[idx_a] = idx_s;
-            circuits[idx_s].insert(idx_a);
-        } else if (b_not_mapped) {
-            i64 idx_s = mapping[idx_a];
-            mapping[idx_b] = idx_s;
-            circuits[idx_s].insert(idx_b);
-        } else {
-            i64 idx_sa = mapping[idx_a];
-            i64 idx_sb = mapping[idx_b];
-            if (idx_sa == idx_sb)
-                continue;
-            if (circuits[idx_sa].size() < circuits[idx_sb].size())
-                swap(idx_sa, idx_sb);
-            for (i64 j : circuits[idx_sb]) {
-                circuits[idx_sa].insert(j);
-                mapping[j] = idx_sa;
-            }
-            circuits[idx_sb].clear();
-        }
+    i64 total = n;
+    i64 last_a = -1;
+    i64 last_b = -1;
 
-        i64 non_empty = 0;
-        i64 last_non_empty = -1;
-        for (size_t j = 0; j < circuits.size(); j++) {
-            if (!circuits[j].empty()) {
-                non_empty++;
-                last_non_empty = j;
-            }
-        }
-
-        if (non_empty == 1) {
-            last_a = idx_a;
-            last_b = idx_b;
-            break;
+    for (auto [d, a, b] : pairs) {
+        if (uf2.union_(a, b)) {
+            total--;
+            last_a = a;
+            last_b = b;
+            if (total == 1)
+                break;
         }
     }
 
