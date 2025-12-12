@@ -1,14 +1,12 @@
 #include "aoc.hpp"
 
-struct JunctionBox
-{
+struct JunctionBox {
     i64 x;
     i64 y;
     i64 z;
 };
 
-struct UnionFind
-{
+struct UnionFind {
     vector<i64> parent;
     vector<i64> size;
 

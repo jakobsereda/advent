@@ -1,12 +1,10 @@
 #include "aoc.hpp"
 
-struct Machine
-{
+struct Machine {
     u32         lights;
     u32         lights_cnt;
     vector<u32> buttons;
     vector<u32> joltage;
-    vector<u32> joltage_cnts;
 };
 
 i64 find_min_presses(const Machine &m)
@@ -76,26 +74,40 @@ int main(void)
         string s3;
         while (getline(ss3, s3, ','))
             joltage.push_back(stoi(s3));
-        vector<u32> joltage_cnts(joltage.size(), 0);
 
         machines[i] = Machine {
             .lights       = lights,
             .lights_cnt   = lights_cnt,
             .buttons      = buttons,
-            .joltage      = joltage,
-            .joltage_cnts = joltage_cnts
+            .joltage      = joltage
         };
     }
 
     i64 sum = 0;
-    for (Machine m : machines)
+    for (Machine &m : machines)
         sum += find_min_presses(m);
 
     // ==== part two ====
 
+    vector<thread> threads;
+    vector<i64> results(n);
+
+    static i64 j = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        threads.emplace_back([&, i] {
+            results[i] = find_min_presses2(machines[i]);
+            j++;
+            cout << "done machine " << j << '\\' << n << '\n';
+        });
+    }
+
+    for (auto& t : threads)
+        t.join();
+
     i64 sum2 = 0;
-    for (Machine m : machines)
-        sum2 += find_min_presses2(m);
+    for (i64 i : results)
+        sum2 += i;
 
     // ==================
 
